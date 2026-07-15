@@ -2,6 +2,9 @@
 
 A simple Jekyll-based recipe site, built to run on GitHub Pages.
 
+
+Collection of recipes. 
+
 ## Adding a recipe
 
 Create a new `.md` file in `_recipes/`, e.g. `_recipes/pad-thai.md`. Ingredients go in
