@@ -1,7 +1,16 @@
 title: My Recipe Book
 description: A collection of recipes I love
-baseurl: "/recipes"   # leave blank if using yourname.github.io, else "/reponame"
+baseurl: "/recipes"
 url: ""
+
+# Order that recipe categories/sections appear on the homepage.
+# Any recipe with a category not listed here falls into "Other" at the end.
+category_order:
+  - Breakfast
+  - Lunch
+  - Dinner
+  - Snacks
+  - Dessert
 
 # Tell Jekyll to treat everything in _recipes as a "recipes" collection
 collections:
