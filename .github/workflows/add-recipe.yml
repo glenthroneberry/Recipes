@@ -1,0 +1,135 @@
+name: Add recipe from issue
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  add-recipe:
+    if: contains(github.event.issue.labels.*.name, 'new-recipe')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse issue and create recipe file
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body || "";
+
+            // GitHub issue forms render each field as "### Label" followed by the answer.
+            const sections = {};
+            const parts = body.split(/^### (.+)$/m).slice(1);
+            for (let i = 0; i < parts.length; i += 2) {
+              const key = parts[i].trim();
+              const value = (parts[i + 1] || "").trim();
+              sections[key] = value;
+            }
+
+            function clean(v) {
+              if (!v || v.trim() === "_No response_") return "";
+              return v.trim();
+            }
+
+            function slugify(s) {
+              return s
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/(^-|-$)/g, "");
+            }
+
+            function yamlEscape(s) {
+              return String(s).replace(/"/g, '\\"');
+            }
+
+            const title = clean(sections["Recipe Title"]) || "Untitled Recipe";
+            const category = clean(sections["Category"]);
+            const prepTime = clean(sections["Prep Time"]);
+            const cookTime = clean(sections["Cook Time"]);
+            const servings = clean(sections["Servings"]);
+            const tagsRaw = clean(sections["Tags"]);
+            const tags = tagsRaw
+              ? tagsRaw.split(",").map((t) => t.trim()).filter(Boolean)
+              : [];
+            const ingredientsRaw = clean(sections["Ingredients"]);
+            const instructionsRaw = clean(sections["Instructions"]);
+            const notes = clean(sections["Notes"]);
+
+            const ingredients = ingredientsRaw
+              .split("\n")
+              .map((l) => l.trim())
+              .filter(Boolean)
+              .map((line) => {
+                const p = line.split(",").map((x) => x.trim());
+                return {
+                  amount: parseFloat(p[0]) || 0,
+                  unit: p[1] || "",
+                  name: p.slice(2).join(",").trim(),
+                };
+              });
+
+            const steps = instructionsRaw
+              .split("\n")
+              .map((l) => l.trim())
+              .filter(Boolean);
+
+            let fm = "---\n";
+            fm += `title: "${yamlEscape(title)}"\n`;
+            if (category) fm += `category: ${category}\n`;
+            if (prepTime) fm += `prep_time: "${yamlEscape(prepTime)}"\n`;
+            if (cookTime) fm += `cook_time: "${yamlEscape(cookTime)}"\n`;
+            if (servings) fm += `servings: ${servings}\n`;
+            if (tags.length)
+              fm += `tags: [${tags.map((t) => `"${yamlEscape(t)}"`).join(", ")}]\n`;
+            if (ingredients.length) {
+              fm += "ingredients:\n";
+              ingredients.forEach((ing) => {
+                fm += `  - name: "${yamlEscape(ing.name)}"\n`;
+                fm += `    amount: ${ing.amount}\n`;
+                fm += `    unit: "${yamlEscape(ing.unit)}"\n`;
+              });
+            }
+            fm += "---\n\n";
+
+            let content = "## Instructions\n\n";
+            steps.forEach((step, i) => {
+              content += `${i + 1}. ${step}\n`;
+            });
+            if (notes) {
+              content += `\n## Notes\n\n${notes}\n`;
+            }
+
+            const fileContent = fm + content;
+            const slug = slugify(title);
+            const path = `_recipes/${slug}.md`;
+
+            await github.rest.repos.createOrUpdateFileContents({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: path,
+              message: `Add recipe: ${title}`,
+              content: Buffer.from(fileContent).toString("base64"),
+              committer: {
+                name: "Recipe Bot",
+                email: "actions@github.com",
+              },
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🎉 Added! "${title}" will show up on the site in a couple minutes once it rebuilds.`,
+            });
+
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: "closed",
+            });
