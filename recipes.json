@@ -6,6 +6,7 @@ layout: null
   {
     "title": {{ recipe.title | jsonify }},
     "url": {{ recipe.url | relative_url | jsonify }},
+    "category": {{ recipe.category | jsonify }},
     "servings": {{ recipe.servings | default: 1 | jsonify }},
     "tags": {{ recipe.tags | jsonify }},
     "ingredients": {{ recipe.ingredients | jsonify }}
