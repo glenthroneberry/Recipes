@@ -1,5 +1,6 @@
 ---
 title: Banana Bread
+category: Dessert
 prep_time: 15 min
 cook_time: 60 min
 servings: 8
