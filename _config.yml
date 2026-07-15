@@ -3,6 +3,9 @@ description: A collection of recipes I love
 baseurl: "/recipes"
 url: ""
 
+# Full URL to your GitHub repo (used for the "+ Add a Recipe" link)
+github_repo_url: "https://github.com/glenthroneberry/recipes"
+
 # Order that recipe categories/sections appear on the homepage.
 # Any recipe with a category not listed here falls into "Other" at the end.
 category_order:
@@ -16,7 +19,7 @@ category_order:
 collections:
   recipes:
     output: true
-    permalink: /recipes/:path/
+    permalink: /:path/
 
 # Default layout for anything in the recipes collection
 defaults:
