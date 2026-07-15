@@ -33,23 +33,24 @@ title: Home
     {% endif %}
   {% endfor %}
 
-  {% assign categorized = site.recipes | where_exp: "r", "site.category_order contains r.category" %}
-  {% assign uncategorized = site.recipes | where_exp: "r", "site.category_order contains r.category == false" %}
-  {% if uncategorized.size > 0 %}
-  <section class="recipe-section">
-    <h2>Other</h2>
-    <ul class="recipe-list">
-      {% for recipe in uncategorized %}
-      <li>
-        <a href="{{ recipe.url | relative_url }}">{{ recipe.title }}</a>
-        {% if recipe.tags %}
-        <span class="tags">
-          {% for tag in recipe.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
-        </span>
-        {% endif %}
-      </li>
-      {% endfor %}
-    </ul>
-  </section>
-  {% endif %}
+  {% assign grouped = site.recipes | group_by: "category" %}
+  {% for group in grouped %}
+    {% unless site.category_order contains group.name %}
+    <section class="recipe-section">
+      <h2>{{ group.name | default: "Other" }}</h2>
+      <ul class="recipe-list">
+        {% for recipe in group.items %}
+        <li>
+          <a href="{{ recipe.url | relative_url }}">{{ recipe.title }}</a>
+          {% if recipe.tags %}
+          <span class="tags">
+            {% for tag in recipe.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+          </span>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endunless %}
+  {% endfor %}
 </main>
