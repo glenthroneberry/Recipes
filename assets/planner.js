@@ -33,9 +33,12 @@
 
   function fetchRecipes() {
     // relative to this page's own URL, so it works whether the site
-    // lives at the domain root or under a /reponame/ subpath
+    // lives at the domain root or under a /reponame/ subpath.
+    // cache: "no-store" plus a timestamp query param ensures we never
+    // get served a stale cached copy after a new recipe is added.
     var url = new URL("recipes.json", window.location.href);
-    fetch(url)
+    url.searchParams.set("t", Date.now());
+    fetch(url, { cache: "no-store" })
       .then(function (res) {
         if (!res.ok) throw new Error("Failed to load recipes.json");
         return res.json();
