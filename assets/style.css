@@ -170,3 +170,12 @@ header {
 .error {
   color: #a33;
 }
+.comments {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+.comments h2 {
+  margin-bottom: 1rem;
+}
+
