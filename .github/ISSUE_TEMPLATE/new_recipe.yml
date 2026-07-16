@@ -22,8 +22,10 @@ body:
         - Breakfast
         - Lunch
         - Dinner
+        - Sides
         - Snacks
         - Dessert
+        - Drinks
         - Other
     validations:
       required: true
