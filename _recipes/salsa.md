@@ -20,6 +20,9 @@ ingredients:
   - name: "garlic powder"
     amount: 1
     unit: "unit"
+  - name: "chips for dipping"
+    amount: 1
+    unit: "bag"
 ---
 
 ## Instructions
