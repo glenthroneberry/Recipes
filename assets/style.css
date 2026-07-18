@@ -189,4 +189,26 @@ a:hover {
 .comments h2 {
   margin-bottom: 1rem;
 }
-
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.tag-filter-btn {
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #555;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.tag-filter-btn:hover {
+  background: #f2e6da;
+}
+.tag-filter-btn.active {
+  background: #b1481b;
+  border-color: #b1481b;
+  color: #fff;
+}
