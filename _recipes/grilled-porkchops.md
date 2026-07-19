@@ -1,10 +1,10 @@
 ---
 title: "Grilled porkchops"
-category: Breakfast
+category: Dinner
 prep_time: "45 min"
 cook_time: "45 min"
 servings: 3
-tags: ["Grilling", "Kaitlin fav"]
+tags: ["Grilling", "Kaitlin fave"]
 ingredients:
   - name: "thick cut porkchops"
     amount: 3
